@@ -469,22 +469,22 @@ footer {
     <div class="tl fu">
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">2023 – Present</div>
+        <div class="tl-year">2024 – Present</div>
         <div class="tl-org">J.D. Power</div>
-        <div class="tl-role">Product Consultant — Mobile Apps Lead</div>
+        <div class="tl-role">Product Consultant — Global Automotive Consulting</div>
         <div class="tl-desc">Leads the U.S. OEM EV App and ICE App annual benchmark studies. Serves as public spokesperson on vehicle app satisfaction research. Consults global OEM clients on applying proprietary insights to digital product strategy.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">2021 – 2023</div>
+        <div class="tl-year">2023</div>
         <div class="tl-org">J.D. Power</div>
-        <div class="tl-role">Customer Success Consultant · Senior Analyst</div>
-        <div class="tl-desc">Developed client-facing insights deliverables and supported monthly industry insight calls with VP-level OEM stakeholders across J.D. Power's automotive consulting practice.</div>
+        <div class="tl-role">Sr. Analyst, Automotive Consulting</div>
+        <div class="tl-desc">Developed client-facing insights deliverables and supported monthly industry insight calls with VP-level OEM stakeholders across J.D. Power's automotive consulting practice. Specialized in business insights and data analysis.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">2018 – 2021</div>
-        <div class="tl-org">Stellantis (FCA / PSA)</div>
+        <div class="tl-year">2018</div>
+        <div class="tl-org">Stellantis</div>
         <div class="tl-role">Product Development Engineer</div>
         <div class="tl-desc">Contributed to vehicle product engineering during the formation of Stellantis — one of the largest automotive mergers in history. Coordinated across engineering, manufacturing, and program teams in a large-scale matrix organization.</div>
       </div>
@@ -632,7 +632,7 @@ function tw(el) {
 }
 
 // Contact form
-function send() {
+async function send() {
   const fn = document.getElementById('fn').value.trim();
   const em = document.getElementById('em').value.trim();
   const ms = document.getElementById('ms').value.trim();
@@ -640,11 +640,36 @@ function send() {
   const ln = document.getElementById('ln').value.trim();
   const co = document.getElementById('co').value.trim();
   const re = document.getElementById('re').value;
-  const subj = encodeURIComponent('Portfolio Inquiry: ' + (re || 'General') + ' — ' + fn + ' ' + ln);
-  const body = encodeURIComponent('From: ' + fn + ' ' + ln + '\nEmail: ' + em + '\nCompany: ' + (co||'—') + '\nReason: ' + (re||'—') + '\n\nMessage:\n' + ms);
-  window.location.href = 'mailto:violet.allmandinger@gmail.com?subject=' + subj + '&body=' + body;
-  document.getElementById('contactForm').style.display = 'none';
-  document.getElementById('formOk').style.display = 'block';
+
+  const btn = document.querySelector('.form-submit');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('https://formspree.io/f/xpqjejwv', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        name: fn + ' ' + ln,
+        email: em,
+        company: co || '—',
+        reason: re || '—',
+        message: ms
+      })
+    });
+    if (res.ok) {
+      document.getElementById('contactForm').style.display = 'none';
+      document.getElementById('formOk').style.display = 'block';
+    } else {
+      alert('Something went wrong. Please try again.');
+      btn.textContent = 'Send Message →';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    alert('Something went wrong. Please try again.');
+    btn.textContent = 'Send Message →';
+    btn.disabled = false;
+  }
 }
 </script>
 </body>
