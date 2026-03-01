@@ -632,7 +632,7 @@ function tw(el) {
 }
 
 // Contact form
-function send() {
+async function send() {
   const fn = document.getElementById('fn').value.trim();
   const em = document.getElementById('em').value.trim();
   const ms = document.getElementById('ms').value.trim();
@@ -640,11 +640,36 @@ function send() {
   const ln = document.getElementById('ln').value.trim();
   const co = document.getElementById('co').value.trim();
   const re = document.getElementById('re').value;
-  const subj = encodeURIComponent('Portfolio Inquiry: ' + (re || 'General') + ' — ' + fn + ' ' + ln);
-  const body = encodeURIComponent('From: ' + fn + ' ' + ln + '\nEmail: ' + em + '\nCompany: ' + (co||'—') + '\nReason: ' + (re||'—') + '\n\nMessage:\n' + ms);
-  window.location.href = 'mailto:violet.allmandinger@gmail.com?subject=' + subj + '&body=' + body;
-  document.getElementById('contactForm').style.display = 'none';
-  document.getElementById('formOk').style.display = 'block';
+
+  const btn = document.querySelector('.form-submit');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('https://formspree.io/f/xpqjejwv', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        name: fn + ' ' + ln,
+        email: em,
+        company: co || '—',
+        reason: re || '—',
+        message: ms
+      })
+    });
+    if (res.ok) {
+      document.getElementById('contactForm').style.display = 'none';
+      document.getElementById('formOk').style.display = 'block';
+    } else {
+      alert('Something went wrong. Please try again.');
+      btn.textContent = 'Send Message →';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    alert('Something went wrong. Please try again.');
+    btn.textContent = 'Send Message →';
+    btn.disabled = false;
+  }
 }
 </script>
 </body>
